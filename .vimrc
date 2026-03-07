@@ -173,8 +173,14 @@
         " On file save, format files with pint for PHP
         autocmd BufWritePost *.php silent !`git rev-parse --show-toplevel`/vendor/bin/pint <afile>
 
-        " On file save, format files with pint for C++
+        " On file save, format files with clang-format for C++
         autocmd BufWritePost *.cpp,*.hpp silent !clang-format -i <afile>
+
+        " On file save, format files with ruff for Python
+        autocmd BufWritePost *.py silent !ruff format <afile>
+
+        " On file save, format files with npm script for TypeScript
+        autocmd BufWritePost *.ts,*.tsx silent !npx prettier --write <afile>
     augroup END
 " }}}
 " BACKUPS {{{
