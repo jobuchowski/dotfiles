@@ -9,9 +9,11 @@ if [[ "$active_window_class" == "$WINDOW_CLASS" ]]; then
     if [[ $is_fullscreen -ne 0 ]]; then
         hyprctl dispatch fullscreen
         hyprctl dispatch pin class:$WINDOW_CLASS
+        hyprctl dispatch moveactive exact 100% 0%
     else
         hyprctl dispatch pin class:$WINDOW_CLASS
         hyprctl dispatch fullscreen
+
     fi
 else
     hyprctl dispatch fullscreen
