@@ -43,7 +43,7 @@ if [[ $dropdown_terminal_clients ]]; then
         hyprctl dispatch movetoworkspacesilent +0,class:$WINDOW_CLASS
         pin_window
         hyprctl dispatch focuswindow "class:$WINDOW_CLASS"
-        hyprctl dispatch movewindow u
+        hyprctl dispatch moveactive exact 100% 0%
     fi
 else
     hyprctl dispatch exec "[float; move 0 0; size monitor_w monitor_h*0.3; pin] $TERMINAL"
