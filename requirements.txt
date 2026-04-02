@@ -1,5 +1,0 @@
-i3
-hack font
-awesome font
-rofi
-betterlockscreen
