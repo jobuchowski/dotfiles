@@ -47,6 +47,7 @@ swappy
 ttf-dejavu
 ttf-hack-nerd
 ttf-inconsolata
+udisks2
 ufw
 waybar
 wget

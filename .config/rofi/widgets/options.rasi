@@ -14,13 +14,13 @@ configuration {
 
 * {
     element-padding:             30px 40px;
-    element-size:                130px;
+    element-size:                135px;
     element-font:                "FontAwesome 32";
     inputbar-spacing:            30px;
 }
 
 window {
-    width:                       835px;
+    width:                       1025px;
     height:                      270px;
 }
 
@@ -35,7 +35,7 @@ inputbar {
 
 listview {
     columns:                     1;
-    lines:                       5;
+    lines:                       6;
 }
 
 error-message {

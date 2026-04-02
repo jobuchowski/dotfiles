@@ -1,0 +1,123 @@
+#!/bin/bash
+
+# Backend for QuickShell USB widget
+# Requires: udisks2 (udisksctl), util-linux (lsblk), jq
+# Mounts go to /run/media/$USER/<label>, managed by udisks2.
+
+AUTOMOUNT_FLAG="${HOME:+$HOME/.config/quickshell-usb/automount_enabled}"
+
+[ -n "$AUTOMOUNT_FLAG" ] && mkdir -p "$(dirname "$AUTOMOUNT_FLAG")"
+
+is_automount_enabled() {
+    [ -n "$AUTOMOUNT_FLAG" ] && [ -f "$AUTOMOUNT_FLAG" ] && grep -q "1" "$AUTOMOUNT_FLAG"
+}
+
+case "$1" in
+
+    list)
+        lsblk -Jpo NAME,SIZE,LABEL,FSTYPE,MOUNTPOINT,TRAN,HOTPLUG \
+            | jq '
+                def walk(parent_tran):
+                    .[] | ((.tran // parent_tran) // "") as $tran |
+                    (
+                        if $tran == "usb" and .fstype and .fstype != "" then
+                            {
+                                device:     .name,
+                                size:       (.size // ""),
+                                label:      ((.label // null) // (.name | split("/") | last)),
+                                fstype:     .fstype,
+                                mountpoint: (.mountpoint // ""),
+                                mounted:    ((.mountpoint // "") != "")
+                            }
+                        else
+                            empty
+                        end
+                    ),
+                    ((.children // []) | walk($tran));
+
+                [ .blockdevices | walk("") ]
+            '
+        ;;
+
+    mount)
+        DEVICE="$2"
+        if [ -z "$DEVICE" ]; then
+            echo '{"error": "No device specified"}'; exit 1
+        fi
+
+        if [ ! -b "$DEVICE" ]; then
+            echo '{"error": "Not a valid block device"}'; exit 1
+        fi
+
+        OUTPUT=$(udisksctl mount -b "$DEVICE" 2>&1)
+
+        if [ $? -eq 0 ]; then
+            MOUNT_POINT=$(echo "$OUTPUT" | grep -oP 'at \K.+(?=\.?$)' | sed 's/\.$//')
+            echo "{\"ok\": true, \"mountpoint\": \"${MOUNT_POINT}\"}"
+        else
+            ERR_MSG=$(echo "$OUTPUT" | tail -1 | sed 's/"/\\"/g')
+            echo "{\"error\": \"${ERR_MSG}\"}"
+            exit 1
+        fi
+        ;;
+
+    unmount)
+        DEVICE="$2"
+        if [ -z "$DEVICE" ]; then
+            echo '{"error": "No device specified"}'; exit 1
+        fi
+
+        OUTPUT=$(udisksctl unmount -b "$DEVICE" 2>&1)
+
+        if [ $? -eq 0 ]; then
+            echo '{"ok": true}'
+        else
+            ERR_MSG=$(echo "$OUTPUT" | tail -1 | sed 's/"/\\"/g')
+            echo "{\"error\": \"${ERR_MSG}\"}"
+            exit 1
+        fi
+        ;;
+
+    automount-status)
+        if is_automount_enabled; then
+            echo '{"enabled": true}'
+        else
+            echo '{"enabled": false}'
+        fi
+        ;;
+
+    automount-on)
+        echo "1" > "$AUTOMOUNT_FLAG"
+        echo '{"enabled": true}'
+        ;;
+
+    automount-off)
+        echo "0" > "$AUTOMOUNT_FLAG"
+        echo '{"enabled": false}'
+        ;;
+
+    auto-mount-device)
+        DEVICE="$2"
+        REAL_USER=$(loginctl list-sessions --no-legend | awk 'NR==1 {print $3}')
+        REAL_UID=$(loginctl list-sessions --no-legend | awk 'NR==1 {print $2}')
+        AUTOMOUNT_FLAG="/home/${REAL_USER}/.config/quickshell-usb/automount_enabled"
+
+        if is_automount_enabled && [ -b "$DEVICE" ]; then
+            for i in $(seq 1 10); do
+                if DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/${REAL_UID}/bus" \
+                    runuser -u "$REAL_USER" -- udisksctl info -b "$DEVICE" >/dev/null 2>&1; then
+                    break
+                fi
+                sleep 0.5
+            done
+
+            DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/${REAL_UID}/bus" \
+                runuser -u "$REAL_USER" -- udisksctl mount -b "$DEVICE" --no-user-interaction 2>/dev/null
+        fi
+        ;;
+
+    *)
+        echo "Usage: usb-manager.sh {list|mount|unmount|automount-status|automount-on|automount-off|auto-mount-device} [device]"
+        exit 1
+        ;;
+esac

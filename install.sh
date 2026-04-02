@@ -42,6 +42,7 @@ declare -A ignore=(
     [packages.txt]=1
     [packages-aur.txt]=1
     [bin]=1
+    [polkit]=1
 )
 
 if [ "$install_packages" -eq 1 ]; then
@@ -127,6 +128,11 @@ function add_current_user_to_group {
 }
 
 add_current_user_to_group "input"
+
+# Group storage is used to manage plugged in USB drives without sudo password
+add_current_user_to_group "storage"
+mkdir -p $HOME/.config/quickshell-usb
+sudo cp polkit/10-usb-mount.rules /etc/polkit-1/rules.d/10-usb-mount.rules
 
 function enable_system_service {
     local service_name=$1

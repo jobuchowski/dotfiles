@@ -1,0 +1,19 @@
+// /etc/polkit-1/rules.d/10-usb-mount.rules
+//
+// Allows members of the 'storage' group (or wheel) to mount/unmount
+// without a password prompt.
+//
+// Install: sudo cp 10-usb-mount.rules /etc/polkit-1/rules.d/
+// Make sure your user is in the 'storage' group:
+//   sudo usermod -aG storage $USER
+
+polkit.addRule(function(action, subject) {
+    if ((action.id == "org.freedesktop.udisks2.filesystem-mount" ||
+         action.id == "org.freedesktop.udisks2.filesystem-mount-system" ||
+         action.id == "org.freedesktop.udisks2.filesystem-unmount-others") &&
+        subject.isInGroup("storage"))
+    {
+        return polkit.Result.YES;
+    }
+});
+
