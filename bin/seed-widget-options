@@ -8,6 +8,7 @@ opt_wifi="";
 opt_displays="";
 opt_sound="";
 opt_about_system="";
+opt_usb="";
 
 rofi_cmd() {
 	rofi -dmenu \
@@ -17,7 +18,7 @@ rofi_cmd() {
 }
 
 echo_options() {
-    echo -e "$opt_bluetooth\n$opt_wifi\n$opt_displays\n$opt_sound\n$opt_about_system"
+    echo -e "$opt_bluetooth\n$opt_wifi\n$opt_displays\n$opt_sound\n$opt_about_system\n$opt_usb"
 }
 
 run_rofi() {
@@ -40,6 +41,9 @@ case ${choice} in
         ;;
     $opt_about_system)
         $bin_dir/seed-exec-floating-window kitty bash -c "fastfetch; read -n 1"
+        ;;
+    $opt_usb)
+        hyprctl dispatch exec "[float; center] quickshell -p $HOME/.config/quickshell/apps/usb"
         ;;
 esac
 

@@ -20,8 +20,8 @@ configuration {
 }
 
 window {
-    width:                       1025px;
-    height:                      270px;
+    width:                       855px;
+    height:                      460px;
 }
 
 mainbox {
@@ -34,8 +34,9 @@ inputbar {
 }
 
 listview {
-    columns:                     1;
-    lines:                       6;
+    layout:                      vertical;
+    columns:                     5;
+    lines:                       2;
 }
 
 error-message {
