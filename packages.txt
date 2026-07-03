@@ -43,6 +43,7 @@ python-pip
 ripgrep
 rofi
 rofi-calc
+slurp
 swappy
 ttf-dejavu
 ttf-hack-nerd
@@ -50,6 +51,7 @@ ttf-inconsolata
 udisks2
 ufw
 waybar
+wf-recorder
 wget
 wireplumber
 wl-clipboard

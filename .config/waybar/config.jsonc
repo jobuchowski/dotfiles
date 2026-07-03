@@ -12,6 +12,7 @@
         "hyprland/window"
     ],
     "modules-center": [
+        "custom/recording"
     ],
     "modules-right": [
         "keyboard-state",
@@ -138,6 +139,12 @@
             "(.*) .* [a-zA-Z]* profile — Mozilla Firefox": " $1",
             "Mozilla Firefox": ""
         }
+    },
+    "custom/recording": {
+        "exec": "pgrep -x wf-recorder > /dev/null && echo ' Recording...'",
+        "interval": 1,
+        "on-click": "~/.local/bin/seed-record",
+        "tooltip": false
     },
     "hyprland/workspaces": {
         "format": "{icon}",

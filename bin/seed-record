@@ -1,0 +1,65 @@
+#!/bin/bash
+
+RECORDINGS_DIR="$HOME/Videos/recordings"
+
+output_file() {
+    mkdir -p "$RECORDINGS_DIR"
+    echo "$RECORDINGS_DIR/recording-`date +%Y%m%d-%H%M%S`.mp4"
+}
+
+stop_recording() {
+    pkill --signal SIGINT wf-recorder
+    notify-send "Recording stopped" "Saved to $RECORDINGS_DIR" -u low -t 2000
+}
+
+record_fullscreen() {
+    local monitor=`hyprctl monitors -j | jq -r '.[] | select(.focused) | .name'`
+    local file=`output_file`
+    notify-send "Recording started" "Fullscreen ($monitor)" -u low -t 2000
+    wf-recorder -o "$monitor" -f "$file"
+}
+
+record_window() {
+    local geometry=`hyprctl activewindow -j | jq -r '"\(.at[0]),\(.at[1]) \(.size[0])x\(.size[1])"'`
+    local title=`hyprctl activewindow -j | jq -r '.title'`
+    if [ "$geometry" == "null,null nullxnull" ]; then
+        notify-send "Recording failed" "No active window" -u normal -t 2000
+        exit 1
+    fi
+    local file=`output_file`
+    notify-send "Recording started" "Window: $title" -u low -t 2000
+    wf-recorder -g "$geometry" -f "$file"
+}
+
+record_area() {
+    local area=`slurp`
+    if [ -z "$area" ]; then
+        exit 1
+    fi
+    local file=`output_file`
+    notify-send "Recording started" "Area: $area" -u low -t 2000
+    wf-recorder -g "$area" -f "$file"
+}
+
+# Running while a recording is active stops it, so the same
+# keybind can toggle recording on and off
+if pgrep -x wf-recorder > /dev/null; then
+    stop_recording
+    exit 0
+fi
+
+case $1 in
+    "fullscreen")
+        record_fullscreen
+        ;;
+    "area")
+        record_area
+        ;;
+    "window")
+        record_window
+        ;;
+    *)
+        echo "Usage: seed-record [fullscreen|area|window]"
+        exit 1
+        ;;
+esac

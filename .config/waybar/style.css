@@ -196,6 +196,12 @@ label:focus {
     background: #FEC7CD;
 }
 
+#custom-recording {
+    color: #F53C3C;
+    font-weight: bold;
+    padding: 0 10px;
+}
+
 #custom-separator {
     margin: 0 2px;
     color: #FFFFFF;
