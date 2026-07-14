@@ -1,5 +1,10 @@
 #!/bin/bash
 
-trap 'hyprctl dispatch focuscurrentorlast; hyprctl dispatch focuscurrentorlast' EXIT
-exec hyprlock
+restore_focus() {
+    hyprctl dispatch 'hl.dsp.focus({ last = true })'
+    hyprctl dispatch 'hl.dsp.focus({ last = true })'
+}
 
+trap restore_focus EXIT
+
+hyprlock

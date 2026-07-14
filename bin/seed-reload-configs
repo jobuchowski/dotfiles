@@ -1,12 +1,10 @@
 #!/bin/bash
 
 hyprctl reload
-
 dunstctl reload
 
-killall waybar
-hyprctl dispatch exec waybar
+pkill -x waybar 2>/dev/null
+nohup waybar >/dev/null 2>&1 &
 
-kill $(pidof hypridle)
+pkill -x hypridle 2>/dev/null
 nohup hypridle >/dev/null 2>&1 &
-

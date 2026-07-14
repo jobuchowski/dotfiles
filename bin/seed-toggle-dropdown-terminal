@@ -4,25 +4,25 @@ WINDOW_CLASS="terminal-dropdown11"
 TERMINAL="kitty --class $WINDOW_CLASS"
 
 function unpin_window() {
-    is_pinned=$(hyprctl clients -j | jq -r ".[] | select(.class == \"$WINDOW_CLASS\") | .pinned")
-    if [[ "$is_pinned" == "true" ]]; then
-        hyprctl dispatch pin class:$WINDOW_CLASS
-    fi
+    hyprctl dispatch "hl.dsp.window.pin({
+      action = 'unset',
+      window = 'class:$WINDOW_CLASS'
+    })"
 }
 
 function pin_window() {
-    is_pinned=$(hyprctl clients -j | jq -r ".[] | select(.class == \"$WINDOW_CLASS\") | .pinned")
-    if [[ "$is_pinned" == "false" ]]; then
-        hyprctl dispatch pin class:$WINDOW_CLASS
-    fi
+    hyprctl dispatch "hl.dsp.window.pin({
+      action = 'set',
+      window = 'class:$WINDOW_CLASS'
+    })"
 }
 
 function change_focus() {
     active_window_workspace_id=$(hyprctl activewindow -j | jq -r ".workspace.id")
     next_focus_window_address=$(hyprctl clients -j | jq -r "sort_by(.focusHistoryID) | [.[] | select(.workspace.id == $active_window_workspace_id)] | .[1].address")
 
-    if [[ "$next_focus_window_address" != "null" ]]; then
-        hyprctl dispatch focuswindow address:$next_focus_window_address
+    if [[ -n "$next_focus_window_address" ]]; then
+        hyprctl dispatch "hl.dsp.focus({ window = 'address:$next_focus_window_address' })"
     fi
 }
 
@@ -33,18 +33,31 @@ if [[ $dropdown_terminal_clients ]]; then
     if [[ "$active_workspace_id" == "$dropdown_terminal_workspace_id" ]]; then
         is_fullscreen=$(hyprctl activewindow -j | jq -r '.fullscreen')
         if [[ $is_fullscreen -ne 0 ]]; then
-            hyprctl dispatch fullscreen
+            hyprctl dispatch 'hl.dsp.window.fullscreen()'
         fi
 
         unpin_window
         change_focus
-        hyprctl dispatch movetoworkspacesilent special:dropdownterminal,class:$WINDOW_CLASS
+        hyprctl dispatch "hl.dsp.window.move({
+          workspace = 'special:dropdownterminal',
+          follow = false,
+          window = 'class:$WINDOW_CLASS'
+        })"
     else
-        hyprctl dispatch movetoworkspacesilent +0,class:$WINDOW_CLASS
+        hyprctl dispatch "hl.dsp.window.move({
+            workspace = '+0',
+            follow = false,
+            window = 'class:$WINDOW_CLASS'
+        })"
         pin_window
-        hyprctl dispatch focuswindow "class:$WINDOW_CLASS"
-        hyprctl dispatch moveactive exact 100% 0%
+        hyprctl dispatch "hl.dsp.focus({ window = 'class:$WINDOW_CLASS' })"
+        hyprctl dispatch 'hl.dsp.window.move({ x = "100%", y = "0%", relative = false })'
     fi
 else
-    hyprctl dispatch exec "[float; move 0 0; size monitor_w monitor_h*0.3; pin] $TERMINAL"
+    hyprctl dispatch "hl.dsp.exec_cmd([[$TERMINAL]], {
+        float = true,
+        move = { 0, 0 },
+        size = { 'monitor_w', 'monitor_h*0.3' },
+        pin = true
+    })"
 fi
