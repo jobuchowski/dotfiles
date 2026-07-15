@@ -51,7 +51,13 @@ if [[ $dropdown_terminal_clients ]]; then
         })"
         pin_window
         hyprctl dispatch "hl.dsp.focus({ window = 'class:$WINDOW_CLASS' })"
-        hyprctl dispatch 'hl.dsp.window.move({ x = "100%", y = "0%", relative = false })'
+        monitor_pos=$(hyprctl monitors -j | jq -r '.[] | select(.focused) | "\(.x) \(.y)"')
+        hyprctl dispatch "hl.dsp.window.move({
+            x = ${monitor_pos% *},
+            y = ${monitor_pos#* },
+            relative = false,
+            window = 'class:$WINDOW_CLASS'
+        })"
     fi
 else
     hyprctl dispatch "hl.dsp.exec_cmd([[$TERMINAL]], {
