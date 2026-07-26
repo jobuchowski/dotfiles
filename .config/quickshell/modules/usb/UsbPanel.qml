@@ -3,6 +3,7 @@ import Quickshell.Io
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
+import qs.modules as Modules
 
 Scope {
     id: root
@@ -14,17 +15,6 @@ Scope {
     property bool automountEnabled: false
     property var usbDrives: []          // list of drive objects from the script
     property bool loading: false
-
-    // ── Colors / Theme ─────────────────────────────────────────────────
-    readonly property color bgColor:        "#1e1e2e"
-    readonly property color surfaceColor:   "#313244"
-    readonly property color overlayColor:   "#45475a"
-    readonly property color textColor:      "#cdd6f4"
-    readonly property color subtextColor:   "#a6adc8"
-    readonly property color accentColor:    "#89b4fa"
-    readonly property color greenColor:     "#a6e3a1"
-    readonly property color redColor:       "#f38ba8"
-    readonly property color yellowColor:    "#f9e2af"
 
     // ── IPC ─────────────────────────────────────────────────────────────
 
@@ -143,7 +133,7 @@ Scope {
 
         Rectangle {
             anchors.fill: parent
-            color: root.bgColor
+            color: Modules.Theme.bgColor
 
             ColumnLayout {
                 id: windowContent
@@ -163,7 +153,7 @@ Scope {
 
                     Text {
                         text: "USB Drive Manager"
-                        color: root.textColor
+                        color: Modules.Theme.textColor
                         font.pixelSize: 15
                         font.bold: true
                         Layout.fillWidth: true
@@ -173,12 +163,12 @@ Scope {
                     Rectangle {
                         width: 28; height: 28
                         radius: 6
-                        color: refreshMa.containsMouse ? root.overlayColor : root.surfaceColor
+                        color: refreshMa.containsMouse ? Modules.Theme.overlayColor : Modules.Theme.surfaceColor
 
                         Text {
                             anchors.centerIn: parent
                             text: "⟳"
-                            color: root.accentColor
+                            color: Modules.Theme.accentColor
                             font.pixelSize: 16
                             rotation: root.loading ? 360 : 0
 
@@ -204,7 +194,7 @@ Scope {
                 Rectangle {
                     Layout.fillWidth: true
                     height: 1
-                    color: root.overlayColor
+                    color: Modules.Theme.overlayColor
                 }
 
                 // ── Auto-mount toggle ──────────────────────
@@ -213,7 +203,7 @@ Scope {
                     Layout.fillWidth: true
                     height: 44
                     radius: 8
-                    color: root.surfaceColor
+                    color: Modules.Theme.surfaceColor
 
                     RowLayout {
                         anchors.fill: parent
@@ -227,12 +217,12 @@ Scope {
 
                             Text {
                                 text: "Auto-mount"
-                                color: root.textColor
+                                color: Modules.Theme.textColor
                                 font.pixelSize: 13
                             }
                             Text {
                                 text: "Mount new drives to /mnt/usbX"
-                                color: root.subtextColor
+                                color: Modules.Theme.subtextColor
                                 font.pixelSize: 10
                             }
                         }
@@ -242,7 +232,7 @@ Scope {
                             id: toggleTrack
                             width: 42; height: 22
                             radius: 11
-                            color: root.automountEnabled ? root.greenColor : root.overlayColor
+                            color: root.automountEnabled ? Modules.Theme.greenColor : Modules.Theme.overlayColor
 
                             Behavior on color {
                                 ColorAnimation { duration: 150 }
@@ -252,7 +242,7 @@ Scope {
                                 id: toggleKnob
                                 width: 18; height: 18
                                 radius: 9
-                                color: root.textColor
+                                color: Modules.Theme.textColor
                                 y: 2
                                 x: root.automountEnabled ? parent.width - width - 2 : 2
 
@@ -279,7 +269,7 @@ Scope {
                     text: root.automountEnabled
                           ? "Connected Drives (auto-managed)"
                           : "Connected Drives (manual)"
-                    color: root.subtextColor
+                    color: Modules.Theme.subtextColor
                     font.pixelSize: 11
                     font.weight: Font.Medium
                     Layout.topMargin: 2
@@ -293,12 +283,12 @@ Scope {
                     Layout.fillWidth: true
                     height: 60
                     radius: 8
-                    color: root.surfaceColor
+                    color: Modules.Theme.surfaceColor
 
                     Text {
                         anchors.centerIn: parent
                         text: root.loading ? "Scanning…" : "No USB drives detected"
-                        color: root.subtextColor
+                        color: Modules.Theme.subtextColor
                         font.pixelSize: 12
                     }
                 }
@@ -315,7 +305,7 @@ Scope {
                         Layout.fillWidth: true
                         height: 56
                         radius: 8
-                        color: driveMa.containsMouse ? root.overlayColor : root.surfaceColor
+                        color: driveMa.containsMouse ? Modules.Theme.overlayColor : Modules.Theme.surfaceColor
 
                         MouseArea {
                             id: driveMa
@@ -334,14 +324,14 @@ Scope {
                                 width: 36; height: 36
                                 radius: 8
                                 color: driveCard.modelData.mounted
-                                       ? Qt.rgba(root.greenColor.r, root.greenColor.g, root.greenColor.b, 0.15)
-                                       : Qt.rgba(root.accentColor.r, root.accentColor.g, root.accentColor.b, 0.15)
+                                       ? Qt.rgba(Modules.Theme.greenColor.r, Modules.Theme.greenColor.g, Modules.Theme.greenColor.b, 0.15)
+                                       : Qt.rgba(Modules.Theme.accentColor.r, Modules.Theme.accentColor.g, Modules.Theme.accentColor.b, 0.15)
 
                                 Text {
                                     anchors.centerIn: parent
                                     text: driveCard.modelData.mounted ? "⛁" : "⛀"
                                     font.pixelSize: 18
-                                    color: driveCard.modelData.mounted ? root.greenColor : root.accentColor
+                                    color: driveCard.modelData.mounted ? Modules.Theme.greenColor : Modules.Theme.accentColor
                                 }
                             }
 
@@ -352,7 +342,7 @@ Scope {
 
                                 Text {
                                     text: driveCard.modelData.label || driveCard.modelData.device
-                                    color: root.textColor
+                                    color: Modules.Theme.textColor
                                     font.pixelSize: 13
                                     font.weight: Font.Medium
                                     elide: Text.ElideRight
@@ -367,7 +357,7 @@ Scope {
                                         }
                                         return info;
                                     }
-                                    color: root.subtextColor
+                                    color: Modules.Theme.subtextColor
                                     font.pixelSize: 10
                                     font.family: "monospace"
                                     elide: Text.ElideRight
@@ -381,16 +371,16 @@ Scope {
                                 height: 28
                                 radius: 6
                                 color: driveCard.modelData.mounted
-                                       ? Qt.rgba(root.redColor.r, root.redColor.g, root.redColor.b, 0.15)
-                                       : Qt.rgba(root.greenColor.r, root.greenColor.g, root.greenColor.b, 0.15)
-                                border.color: driveCard.modelData.mounted ? root.redColor : root.greenColor
+                                       ? Qt.rgba(Modules.Theme.redColor.r, Modules.Theme.redColor.g, Modules.Theme.redColor.b, 0.15)
+                                       : Qt.rgba(Modules.Theme.greenColor.r, Modules.Theme.greenColor.g, Modules.Theme.greenColor.b, 0.15)
+                                border.color: driveCard.modelData.mounted ? Modules.Theme.redColor : Modules.Theme.greenColor
                                 border.width: 1
 
                                 Text {
                                     id: btnText
                                     anchors.centerIn: parent
                                     text: driveCard.modelData.mounted ? "Unmount" : "Mount"
-                                    color: driveCard.modelData.mounted ? root.redColor : root.greenColor
+                                    color: driveCard.modelData.mounted ? Modules.Theme.redColor : Modules.Theme.greenColor
                                     font.pixelSize: 11
                                     font.weight: Font.Medium
                                 }
@@ -418,7 +408,7 @@ Scope {
                 Text {
                     visible: !root.automountEnabled && root.usbDrives.length > 0
                     text: "ℹ  Auto-mount is off — plug in a drive and mount it here"
-                    color: root.yellowColor
+                    color: Modules.Theme.yellowColor
                     font.pixelSize: 10
                     opacity: 0.7
                     Layout.topMargin: 2
