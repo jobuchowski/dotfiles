@@ -1,0 +1,42 @@
+#!/bin/bash
+
+rofi_dir="$HOME/.config/rofi"
+
+rofi_cmd() {
+	rofi -dmenu \
+		-p "Move to workspace" \
+		-mesg "Move all windows on the current workspace" \
+        -theme ${rofi_dir}/widgets/move-workspace.rasi
+}
+
+echo_options() {
+    for i in $(seq 1 10); do
+        echo "$i"
+    done
+}
+
+run_rofi() {
+    echo_options | rofi_cmd
+}
+
+choice=$(run_rofi)
+
+if [[ -z "$choice" ]]; then
+    exit 0
+fi
+
+current_workspace=$(hyprctl activeworkspace -j | jq -r '.id')
+
+if [[ "$choice" == "$current_workspace" ]]; then
+    exit 0
+fi
+
+hyprctl clients -j \
+    | jq -r --argjson ws "$current_workspace" '.[] | select(.workspace.id == $ws) | .address' \
+    | while read -r address; do
+        hyprctl dispatch "hl.dsp.window.move({
+            workspace = $choice,
+            follow = false,
+            window = 'address:$address'
+        })"
+    done

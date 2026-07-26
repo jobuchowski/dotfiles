@@ -19,6 +19,7 @@ local drun_menu = "rofi -show drun -show-icons"
 local calc_menu = "rofi -show calc -modi calc -normalize-match -no-sort -theme-str 'entry { placeholder: \"Type a calculation\"; }'"
 local power_menu = "$HOME/.local/bin/seed-widget-powermenu"
 local options_window = "$HOME/.local/bin/seed-widget-options"
+local move_workspace_menu = "$HOME/.local/bin/seed-widget-move-workspace"
 local quickshell_daemon = "quickshell -p $HOME/.config/quickshell"
 local usb_manager_toggle = "quickshell ipc call usb toggle"
 local browser = "firefox"
@@ -310,6 +311,7 @@ hl.bind(mainMod .. " + C", hl.dsp.exec_cmd(calc_menu))
 hl.bind(mainMod .. " + X", hl.dsp.exec_cmd(power_menu))
 hl.bind(mainMod .. " + SHIFT + C", hl.dsp.exec_cmd(screen_color_picker))
 hl.bind(mainMod .. " + O", hl.dsp.exec_cmd(options_window))
+hl.bind(mainMod .. " + M", hl.dsp.exec_cmd(move_workspace_menu))
 hl.bind(mainMod .. " + U", hl.dsp.exec_cmd(usb_manager_toggle))
 hl.bind(mainMod .. " + P", hl.dsp.exec_cmd(file_browser))
 hl.bind(mainMod .. " + SHIFT + P", hl.dsp.exec_cmd(palette_color_picker))

@@ -9,6 +9,7 @@ opt_displays="";
 opt_sound="";
 opt_about_system="";
 opt_usb="";
+opt_move_workspace="";
 
 rofi_cmd() {
 	rofi -dmenu \
@@ -18,7 +19,7 @@ rofi_cmd() {
 }
 
 echo_options() {
-    echo -e "$opt_bluetooth\n$opt_wifi\n$opt_displays\n$opt_sound\n$opt_about_system\n$opt_usb"
+    echo -e "$opt_bluetooth\n$opt_wifi\n$opt_displays\n$opt_sound\n$opt_about_system\n$opt_usb\n$opt_move_workspace"
 }
 
 run_rofi() {
@@ -44,6 +45,9 @@ case ${choice} in
         ;;
     $opt_usb)
         quickshell ipc call usb toggle
+        ;;
+    $opt_move_workspace)
+        $bin_dir/seed-widget-move-workspace
         ;;
 esac
 

@@ -1,0 +1,73 @@
+configuration {
+    show-icons:                 false;
+}
+
+@import "~/.config/rofi/theme/colors.rasi"
+@import "~/.config/rofi/theme/general.rasi"
+@import "~/.config/rofi/theme/icon-elements.rasi"
+@import "~/.config/rofi/theme/dummy.rasi"
+@import "~/.config/rofi/theme/horizontal-listview.rasi"
+@import "~/.config/rofi/theme/inputbar.rasi"
+@import "~/.config/rofi/theme/prompt.rasi"
+@import "~/.config/rofi/theme/mainbox.rasi"
+@import "~/.config/rofi/theme/window.rasi"
+
+* {
+    element-padding:             30px 40px;
+    element-size:                135px;
+    element-font:                "Hack Nerd Font Propo 32";
+    inputbar-spacing:            30px;
+}
+
+window {
+    width:                       855px;
+    height:                      460px;
+}
+
+mainbox {
+    spacing:                     var(box-spacing);
+    children:                    [ "inputbar", "listview" ];
+}
+
+inputbar {
+    children:                    [ "dummy", "prompt", "dummy"];
+}
+
+listview {
+    layout:                      vertical;
+    columns:                     5;
+    lines:                       2;
+}
+
+error-message {
+    padding:                     var(general-padding);
+    border:                      0px solid;
+    border-radius:               var(general-radius);
+    border-color:                @selected;
+    background-color:            @background;
+    text-color:                  @foreground;
+}
+textbox {
+    background-color:            inherit;
+    text-color:                  inherit;
+    vertical-align:              0.5;
+    horizontal-align:            0.5;
+    placeholder-color:           @foreground;
+    blink:                       true;
+    markup:                      true;
+}
+
+message {
+    enabled:                     true;
+    margin:                      0px;
+    padding:                     var(general-padding);
+    border:                      0px solid;
+    border-radius:               var(general-radius);
+    border-color:                @selected;
+    background-color:            @background-alt;
+    text-color:                  @foreground;
+}
+
+prompt {
+    padding: 20px 250px 20px 250px;
+}
