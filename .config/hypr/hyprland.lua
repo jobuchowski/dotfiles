@@ -19,7 +19,8 @@ local drun_menu = "rofi -show drun -show-icons"
 local calc_menu = "rofi -show calc -modi calc -normalize-match -no-sort -theme-str 'entry { placeholder: \"Type a calculation\"; }'"
 local power_menu = "$HOME/.local/bin/seed-widget-powermenu"
 local options_window = "$HOME/.local/bin/seed-widget-options"
-local usb_manager = "quickshell -p $HOME/.config/quickshell/apps/usb"
+local quickshell_daemon = "quickshell -p $HOME/.config/quickshell"
+local usb_manager_toggle = "quickshell ipc call usb toggle"
 local browser = "firefox"
 local bar = "waybar"
 local lock = "$HOME/.local/bin/seed-lockscreen"
@@ -54,6 +55,7 @@ hl.on("hyprland.start", function ()
     hl.exec_cmd("dunst -config ~/.config/dunst/config")
     hl.exec_cmd("nm-applet")
     hl.exec_cmd("blueman-applet")
+    hl.exec_cmd(quickshell_daemon)
     hl.exec_cmd("$HOME/.config/hypr/scripts/startup.sh")
     -- Screen sharing:
     hl.exec_cmd("dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP")
@@ -187,6 +189,15 @@ hl.window_rule({
     match = { initial_class = "nm-connection-editor" },
     float = true,
 })
+hl.window_rule({
+    -- Quickshell panels (usb/network) now live in one long-running daemon
+    -- and are shown/hidden via IPC rather than spawned per-invocation, so
+    -- they need a persistent float+center rule instead of exec-time flags.
+    name  = "floating-quickshell",
+    match = { class = "org.quickshell" },
+    float = true,
+    center = true,
+})
 
 -- See https://wiki.hypr.land/Configuring/Layouts/Dwindle-Layout/ for more
 hl.config({
@@ -299,7 +310,7 @@ hl.bind(mainMod .. " + C", hl.dsp.exec_cmd(calc_menu))
 hl.bind(mainMod .. " + X", hl.dsp.exec_cmd(power_menu))
 hl.bind(mainMod .. " + SHIFT + C", hl.dsp.exec_cmd(screen_color_picker))
 hl.bind(mainMod .. " + O", hl.dsp.exec_cmd(options_window))
-hl.bind(mainMod .. " + U", hl.dsp.exec_cmd(usb_manager, { float = true, center = true }))
+hl.bind(mainMod .. " + U", hl.dsp.exec_cmd(usb_manager_toggle))
 hl.bind(mainMod .. " + P", hl.dsp.exec_cmd(file_browser))
 hl.bind(mainMod .. " + SHIFT + P", hl.dsp.exec_cmd(palette_color_picker))
 -- hl.bind(mainMod .. " + P", hl.dsp.window.pseudo()) -- dwindle

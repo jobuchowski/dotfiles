@@ -1,0 +1,40 @@
+#!/bin/bash
+
+list_networks() {
+    query='split("\n") | map(split(":")) | map({"in-use": .[0], "ssid": .[1]}) | [.[] | select(.ssid != null and .ssid != "")]'
+    fields="IN-USE,SSID"
+    nmcli --colors no -t -f "$fields" dev wifi list --rescan no | jq -McsR "$query"
+}
+
+rescan_wifi() {
+    nmcli dev wifi rescan
+}
+
+wifi_status() {
+    nmcli --colors no -t radio wifi
+}
+
+toggle_wifi() {
+    status=$(wifi_status)
+    if [[ "$status" == "enabled" ]]; then
+        nmcli radio wifi off
+    else
+        nmcli radio wifi on
+    fi
+}
+
+case $1 in
+    "list")
+		list_networks
+        ;;
+    "rescan")
+        rescan_wifi
+        ;;
+    "wifi-status")
+        wifi_status
+        ;;
+    "toggle-wifi")
+        toggle_wifi
+        ;;
+esac
+

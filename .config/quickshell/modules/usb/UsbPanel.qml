@@ -10,6 +10,7 @@ Scope {
     // ── Configuration ──────────────────────────────────────────────────
     readonly property string scriptPath: "seed-usb-manager"
 
+    property bool panelVisible: false
     property bool automountEnabled: false
     property var usbDrives: []          // list of drive objects from the script
     property bool loading: false
@@ -24,6 +25,15 @@ Scope {
     readonly property color greenColor:     "#a6e3a1"
     readonly property color redColor:       "#f38ba8"
     readonly property color yellowColor:    "#f9e2af"
+
+    // ── IPC ─────────────────────────────────────────────────────────────
+
+    IpcHandler {
+        target: "usb"
+        function toggle(): void { root.panelVisible = !root.panelVisible; }
+        function show(): void { root.panelVisible = true; }
+        function hide(): void { root.panelVisible = false; }
+    }
 
     // ── Process runners ────────────────────────────────────────────────
 
@@ -93,13 +103,21 @@ Scope {
     }
 
     // ── Refresh timer ──────────────────────────────────────────────────
+    // Only polls while the panel is visible, since this Scope now lives
+    // inside a long-running daemon instead of a process spawned on demand.
 
     Timer {
         id: pollTimer
         interval: 3000
-        running: true
+        running: root.panelVisible
         repeat: true
         onTriggered: refreshDrives()
+    }
+
+    onPanelVisibleChanged: {
+        if (panelVisible) {
+            refreshDrives();
+        }
     }
 
     function refreshDrives() {
@@ -109,7 +127,6 @@ Scope {
 
     function initialize() {
         automountStatusProcess.running = true;
-        refreshDrives();
     }
 
     Component.onCompleted: root.initialize()
@@ -120,8 +137,9 @@ Scope {
         id: window
         width: 360
         height: windowContent.implicitHeight + 48
+        visible: root.panelVisible
 
-        onClosed: Qt.quit()
+        onClosed: root.panelVisible = false
 
         Rectangle {
             anchors.fill: parent

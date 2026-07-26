@@ -43,13 +43,7 @@ case ${choice} in
         $bin_dir/seed-exec-floating-window kitty bash -c "fastfetch; read -n 1"
         ;;
     $opt_usb)
-        hyprctl dispatch "hl.dsp.exec_cmd(
-          'quickshell -p $HOME/.config/quickshell/apps/usb',
-          {
-            float = true,
-            center = true
-          }
-        )"
+        quickshell ipc call usb toggle
         ;;
 esac
 
