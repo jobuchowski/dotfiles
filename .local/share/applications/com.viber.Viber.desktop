@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Viber
+Comment=Viber VoIP and messenger
+Exec=env GDK_SCALE=1 viber %u
+Path=/opt/viber/
+Icon=viber
+Terminal=false
+Type=Application
+Categories=Network;InstantMessaging;P2P;
+MimeType=x-scheme-handler/viber;

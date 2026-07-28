@@ -58,6 +58,7 @@ hl.on("hyprland.start", function ()
     hl.exec_cmd("blueman-applet")
     hl.exec_cmd(quickshell_daemon)
     hl.exec_cmd("$HOME/.config/hypr/scripts/startup.sh")
+    hl.exec_cmd("$HOME/.local/bin/seed-viber-notify-bridge")
     -- Screen sharing:
     hl.exec_cmd("dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP")
 end)
@@ -441,6 +442,21 @@ hl.window_rule({
         float      = true,
         fullscreen = false,
         pin        = false,
+    },
+
+    no_focus = true,
+})
+
+hl.window_rule({
+    -- Viber's own "new message" popup ignores our notification daemon and
+    -- pops up centered, stealing focus from whatever we're doing. It's
+    -- always title "ViberPC" and floating; the real chat window is titled
+    -- "Rakuten Viber" and tiles (floating = 0), so this can't match it.
+    name  = "no-focus-viber-popup",
+    match = {
+        class = "viber",
+        title = "^ViberPC$",
+        float = true,
     },
 
     no_focus = true,

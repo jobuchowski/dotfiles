@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# Viber's desktop popup ignores our notification daemon: it draws its own
+# window instead of going through notify-send. This watches Hyprland's
+# event socket for that popup, closes it immediately, and fires a generic
+# notification through notify-send/dunst instead.
+
+SOCKET="$XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock"
+
+handle_popup() {
+    local addr="0x${1#0x}"
+    hyprctl dispatch "hl.dsp.window.close({ window = 'address:$addr' })" >/dev/null 2>&1
+    notify-send -a "Viber" "New message on Viber"
+}
+
+socat -U - UNIX-CONNECT:"$SOCKET" | while IFS= read -r line; do
+    case "$line" in
+        openwindow\>\>*)
+            payload="${line#openwindow>>}"
+            IFS=',' read -r addr _workspace class title <<< "$payload"
+            if [[ "$class" == "viber" && "$title" == "ViberPC" ]]; then
+                handle_popup "$addr" &
+            fi
+            ;;
+    esac
+done

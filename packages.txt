@@ -44,6 +44,7 @@ ripgrep
 rofi
 rofi-calc
 slurp
+socat
 swappy
 ttf-dejavu
 ttf-hack-nerd
