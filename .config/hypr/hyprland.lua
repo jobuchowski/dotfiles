@@ -304,7 +304,7 @@ local mainMod = "SUPER" -- Sets "Windows" key as main modifier
 -- https://wiki.hypr.land/Configuring/Basics/Binds/
 hl.bind(mainMod .. " + Return", hl.dsp.exec_cmd(terminal))
 hl.bind(mainMod .. " + SHIFT + Q", hl.dsp.window.close())
-hl.bind(mainMod .. " + SHIFT + 0", hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || hyprctl dispatch 'hl.dsp.exit()'"))
+-- hl.bind(mainMod .. " + SHIFT + 0", hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || hyprctl dispatch 'hl.dsp.exit()'"))
 hl.bind(mainMod .. " + space", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + D", hl.dsp.exec_cmd(drun_menu))
 hl.bind(mainMod .. " + SHIFT + D", hl.dsp.exec_cmd(run_menu))

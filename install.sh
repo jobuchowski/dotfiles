@@ -106,13 +106,10 @@ function link_files {
 link_files "" $force_installation 1
 link_files "bin/" $force_installation 0 ".local/"
 
-if [ ! -f ~/.vim/autoload/plug.vim ]; then
-    echo "Downloading Plug"
-    mkdir -p ~/.vim/autoload
-    wget https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim -O ~/.vim/autoload/plug.vim
-    echo "Installing nvim plugins with Plug"
-    nvim +'PlugInstall --sync' +qa
-fi
+# vim.pack (built into Neovim 0.12) clones any missing plugins on startup.
+# Run once headless so the first interactive launch isn't blocked on it.
+echo "Installing Neovim plugins with vim.pack"
+nvim --headless +qa
 
 function add_current_user_to_group {
     group_name=$1

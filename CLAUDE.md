@@ -24,7 +24,7 @@ Post-install: run `nwg-look` to apply Arc GTK theme/icons, then reboot.
 - **`packages.txt`** — official Arch packages (pacman)
 - **`packages-aur.txt`** — AUR packages (installed via yay)
 - **`.bashrc` / `.bash_aliases` / `.bash_profile`** — shell config; `.bash_profile` auto-starts Hyprland on TTY1
-- **`.vimrc`** — shared Vim/Neovim config (Vim-Plug, CoC LSP, language formatters)
+- **`.vimrc`** — editor settings and mappings, sourced by Neovim (no plugin config)
 - **`.config/`** — app configs: hypr, waybar, rofi, kitty, dunst, lazygit, nvim, quickshell
 - **`bin/`** — custom scripts, all prefixed `seed-*`, symlinked to `~/.local/bin/`
 - **`polkit/`** — polkit rules for passwordless USB mounting (installed to `/etc/polkit-1/rules.d/`)
@@ -34,14 +34,42 @@ Post-install: run `nwg-look` to apply Arc GTK theme/icons, then reboot.
 ### Symlink Logic
 `install.sh` iterates the repo root and symlinks each item to `~/`. The `bin/` directory is handled specially: each file in `bin/` is symlinked individually into `~/.local/bin/`. This means editing files in the repo immediately affects the live system.
 
-### Vim Setup
-`.vimrc` uses **Vim-Plug** for plugins and **CoC** for LSP. Language-specific auto-formatters run on save:
+### Neovim Setup
+Neovim only — plain Vim is not used. `~/.config/nvim/init.lua` is the entry point:
+it sets plugin globals, declares plugins via **`vim.pack`** (built into Neovim
+0.12), sources `~/.vimrc`, then configures completion, diagnostics, LSP and
+gitsigns.
+
+Load order is deliberate: plugin globals must precede `vim.pack.add()`, and
+`.vimrc` must follow it because `colorscheme afterglow` comes from a plugin.
+
+LSP uses the **built-in `vim.lsp` client** (`vim.lsp.config` / `vim.lsp.enable`).
+`nvim-lspconfig` is present only as a data source for server definitions. Server
+binaries are installed as system packages via `packages.txt` /
+`packages-aur.txt`, not by a plugin manager:
+
+Official repos are preferred; PHP is the only server with no official-repo option.
+
+| Language | Server | Package |
+|---|---|---|
+| C/C++ | clangd | `clang` |
+| TypeScript/JS | ts_ls | `typescript-language-server` |
+| Python (types) | pyright | `pyright` |
+| Python (lint) | ruff | `ruff` |
+| JSON | jsonls | `vscode-json-languageserver` |
+| PHP | intelephense | `nodejs-intelephense` (AUR) |
+
+clangd runs with `--experimental-modules-support` for C++20 modules. This
+requires a `compile_commands.json` covering every TU in the project, and clangd's
+clang version must match the project's build compiler. `--clang-tidy` is
+deliberately off — it is a known crash source on module units.
+
+Language-specific auto-formatters still run on save via `BufWritePost` shell-outs
+in `.vimrc` (independent of LSP):
 - C++: `clang-format`
 - PHP: `pint`
 - Python: `ruff`
 - TypeScript: `prettier`
-
-`~/.config/nvim/init.vim` extends `.vimrc` with Neovim-only config (gitsigns).
 
 ### Utility Scripts (`bin/`)
 All scripts are prefixed `seed-` and use these tools heavily:

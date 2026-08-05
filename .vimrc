@@ -1,35 +1,7 @@
 " Vimrc
-" PLUGINS {{{
-    call plug#begin('~/.vim/plugins')
-
-    Plug 'sjl/badwolf'
-    Plug 'rafi/awesome-vim-colorschemes'
-    Plug 'vim-airline/vim-airline'
-    Plug 'vim-airline/vim-airline-themes'
-    Plug 'tpope/vim-commentary' " gcc - comment whole line, gc - comment in visual mode
-    Plug 'ramele/agrep' " asynchronous grep
-    Plug 'pangloss/vim-javascript'
-
-    Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-    Plug 'junegunn/fzf.vim'
-
-    Plug 'preservim/nerdtree'
-
-    Plug 'neoclide/coc.nvim', {'branch': 'release'}
-
-    Plug 'SirVer/ultisnips'
-
-    Plug 'ryanoasis/vim-devicons'
-
-    Plug 'MagicDuck/grug-far.nvim'
-
-    Plug 'lewis6991/gitsigns.nvim'
-
-    " Call :PlugInstall in vim to install plugins
-    " :PlugUpdate :PlugDiff
-    " :PlugClean after deleting plugin
-    call plug#end()
-" }}}
+"
+" Editor settings and mappings only. Plugins, LSP and completion are configured
+" in ~/.config/nvim/init.lua, which sources this file.
 " GENERAL SETTINGS {{{
     " Colors {{{
         syntax enable
@@ -162,7 +134,7 @@
 " AUTO GROUPS {{{
     augroup configgroup
         autocmd!
-        " Change Commentary in c++ from /* */ to //
+        " Make built-in gc/gcc use // instead of /* */ in c++
         autocmd FileType c,cpp,cs,java,php setlocal commentstring=//\ %s
         " disable auto comment continues on new line
         autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
@@ -207,71 +179,11 @@
     endfunc
 " }}}
 " PLUGIN SETTINGS {{{
+    " Plugin globals that must be set before load time (airline theme, NERDTree,
+    " UltiSnips triggers) live in ~/.config/nvim/init.lua alongside vim.pack.
     " Airline {{{
         set laststatus=2
-        let g:airline_theme = 'zenburn'
-        " let g:airline_left_sep = ''
-        " let g:airline_left_sep = ''
-        " let g:airline_right_sep = ''
-        " let g:airline_right_sep = ''
     " }}}
-" YouCompleteMe {{{
-    let g:ycm_global_ycm_extra_conf = "~/.vim/.ycm_extra_conf.py"
-    let g:ycm_filetype_blacklist = { 'php': 1 }
-    " highlight Error ctermbg=NONE ctermfg=124 cterm=bold,underline
-    " highlight ErrorMsg ctermbg=124 ctermfg=15
-    " Text of warnings
-    highlight SyntasticWarning cterm=underline,italic
-    " Indicator of warnings
-    highlight SyntasticWarningSign ctermfg=172 cterm=bold
-    " Indicator of errors
-    highlight SyntasticErrorSign ctermfg=124 cterm=bold
-    " highlight SyntasticStyleError cterm=underline,italic
-    " highlight SyntasticStyleErrorSign ctermfg=25 cterm=bold
-    " Text of errors
-    highlight YcmErrorSection ctermbg=124 ctermfg=233 cterm=bold
-" }}}
-" NERDTree {{{
-    " Close NERDTree when new file opens
-    let NERDTreeQuitOnOpen=1
-" }}}
-" CoC {{{
-    " Use <TAB> to select the popup menu:
-    inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-    inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<Tab>"
-    inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>"
-
-    nmap <silent> gd <Plug>(coc-definition)
-    nmap <silent> gD :call CocAction('jumpDefinition', 'tabe')<CR>
-    nmap <silent> gr <Plug>(coc-references)
-    nmap <silent> gy <Plug>(coc-type-definition)
-    nmap <silent> gi <Plug>(coc-implementation)
-    " Apply the most preferred quickfix action to fix diagnostic on the current line
-    nmap <leader>qf  <Plug>(coc-fix-current)
-
-    nnoremap <silent> K :call ShowDocumentation()<CR>
-    function! ShowDocumentation()
-      if CocAction('hasProvider', 'hover')
-        call CocActionAsync('doHover')
-      else
-        call feedkeys('K', 'in')
-      endif
-    endfunction
-
-    let g:coc_global_extensions = [
-      \ '@yaegassy/coc-intelephense',
-      \ 'coc-json',
-      \ 'coc-clangd',
-      \ 'coc-pyright',
-      \ 'coc-tsserver'
-    \ ]
-" }}}
-" UltiSnips {{{
-    " This code should go in your vimrc or init.vim
-    let g:UltiSnipsExpandTrigger       = '<C-s>'    " use Ctrl+S to expand snippets
-    let g:UltiSnipsJumpForwardTrigger  = '<C-s>'    " use Ctrl+S to move forward through tabstops
-    let g:UltiSnipsJumpBackwardTrigger = '<C-a>'    " use Ctrl+A to move backward through tabstops
-" }}}
 " }}}
 "
 " vim:foldmethod=marker:foldlevel=0
