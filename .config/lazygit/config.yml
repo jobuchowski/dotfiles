@@ -1,3 +1,17 @@
 # https://github.com/jesseduffield/lazygit/blob/master/docs/Config.md
 gui:
   language: en
+
+os:
+  editPreset: 'nvim'
+
+customCommands:
+  - key: 'u'
+    command: 'git uncommit'
+    context: 'files'
+    description: 'Uncommit last commit without deleting the changes'
+    loadingText: 'Uncommiting last commit...'
+    prompts:
+      - type: 'confirm'
+        title: 'Uncommit last commit'
+        body: "Are you sure you want to uncommit the last commit?\n\ncommit {{.SelectedCommit.Hash}}\nAuthor: {{.SelectedCommit.AuthorName}} <{{.SelectedCommit.AuthorEmail}}>\nDate:   {{runCommand (printf \"git show -s --format=%%ar %s\" .SelectedCommit.Hash)}}\n\n{{.SelectedCommit.Name}}"
