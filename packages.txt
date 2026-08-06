@@ -13,6 +13,7 @@ feh
 firefox
 fzf
 gcolor3
+git-delta
 htop
 hypridle
 hyprland
