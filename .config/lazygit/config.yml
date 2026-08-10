@@ -17,3 +17,9 @@ customCommands:
       - type: 'confirm'
         title: 'Uncommit last commit'
         body: "Are you sure you want to uncommit the last commit?\n\ncommit {{.SelectedCommit.Hash}}\nAuthor: {{.SelectedCommit.AuthorName}} <{{.SelectedCommit.AuthorEmail}}>\nDate:   {{runCommand (printf \"git show -s --format=%%ar %s\" .SelectedCommit.Hash)}}\n\n{{.SelectedCommit.Name}}"
+  - key: '<c-f>'
+    command: 'git fetch --prune'
+    context: 'remotes'
+    description: 'Fetch and prune deleted remote branches'
+    loadingText: 'Fetching and pruning...'
+    output: log
