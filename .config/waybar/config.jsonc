@@ -15,6 +15,7 @@
         "custom/recording"
     ],
     "modules-right": [
+        "custom/presentation",
         "keyboard-state",
         "hyprland/language",
         "cpu",
@@ -139,6 +140,16 @@
             "(.*) .* [a-zA-Z]* profile — Mozilla Firefox": " $1",
             "Mozilla Firefox": ""
         }
+    },
+    "custom/presentation": {
+        // Refreshed by SIGRTMIN+8, which seed-presentation sends on every
+        // toggle -- no polling needed. Prints nothing when off, which hides
+        // the module.
+        "exec": "~/.local/bin/seed-presentation status",
+        "interval": "once",
+        "signal": 8,
+        "on-click": "~/.local/bin/seed-presentation toggle",
+        "tooltip": false
     },
     "custom/recording": {
         "exec": "pgrep -x wf-recorder > /dev/null && echo ' Recording...'",

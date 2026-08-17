@@ -1,0 +1,86 @@
+#!/bin/bash
+# Presentation mode: keep the screen awake, and say so in waybar.
+#
+# Instead of killing hypridle, this holds a systemd idle inhibitor for as long
+# as the mode is on. hypridle honours those (its ignore_systemd_inhibit option
+# is left at the default, false), so the lock listener never fires while the
+# daemon keeps running for before_sleep/after_sleep handling.
+#
+# usage: seed-presentation [toggle|on|off|status]
+#        toggle is the default; status is what waybar's custom/presentation
+#        module calls.
+
+if [ -z "$XDG_RUNTIME_DIR" ]; then
+    export XDG_RUNTIME_DIR="/run/user/$(id -u)"
+fi
+
+PID_FILE="$XDG_RUNTIME_DIR/presentation.pid"
+WAYBAR_SIGNAL=8 # must match "signal" in custom/presentation (waybar config.jsonc)
+
+notify() {
+    notify-send "$1" -u low -t 1500 -h string:x-canonical-private-synchronous:presentation_status
+}
+
+refresh_waybar() {
+    pkill -RTMIN+"$WAYBAR_SIGNAL" waybar
+}
+
+is_on() {
+    [ -f "$PID_FILE" ] && kill -0 "$(cat "$PID_FILE")" 2>/dev/null
+}
+
+turn_on() {
+    # setsid gives the inhibitor its own process group. systemd-inhibit does not
+    # forward signals to the command it runs, so killing it on its own would
+    # leave `sleep infinity` orphaned; killing the group takes down both.
+    # stdio goes to /dev/null so the long-lived child never holds open a pipe
+    # inherited from whatever launched us.
+    setsid systemd-inhibit \
+        --what=idle \
+        --who="seed-presentation" \
+        --why="Presentation mode" \
+        sleep infinity >/dev/null 2>&1 &
+
+    printf "%s" "$!" >"$PID_FILE"
+
+    notify "Presentation Mode On"
+    refresh_waybar
+}
+
+turn_off() {
+    if [ -f "$PID_FILE" ]; then
+        PID="$(cat "$PID_FILE")"
+        kill -- -"$PID" 2>/dev/null || kill "$PID" 2>/dev/null
+    fi
+
+    rm -f "$PID_FILE"
+
+    notify "Presentation Mode Off"
+    refresh_waybar
+}
+
+case "$1" in
+    on)
+        is_on || turn_on
+        ;;
+    off)
+        turn_off
+        ;;
+    status)
+        # empty output hides the waybar module entirely
+        if is_on; then
+            printf "PRESENTATION"
+        fi
+        ;;
+    toggle | "")
+        if is_on; then
+            turn_off
+        else
+            turn_on
+        fi
+        ;;
+    *)
+        printf "usage: %s [toggle|on|off|status]\n" "${0##*/}" >&2
+        exit 1
+        ;;
+esac

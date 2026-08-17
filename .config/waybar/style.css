@@ -196,6 +196,14 @@ label:focus {
     background: #FEC7CD;
 }
 
+/* same badge treatment as the CapsLock indicator above */
+#custom-presentation {
+    background: #e8463A;
+    color: #242424;
+    padding: 0 8px;
+    font-weight: bold;
+}
+
 #custom-recording {
     color: #F53C3C;
     font-weight: bold;

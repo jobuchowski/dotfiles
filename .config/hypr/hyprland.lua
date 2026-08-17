@@ -44,6 +44,7 @@ local record_area = "$HOME/.local/bin/seed-record area"
 local record_window = "$HOME/.local/bin/seed-record window"
 
 local reload_configs = "$HOME/.local/bin/seed-reload-configs"
+local presentation_toggle = "$HOME/.local/bin/seed-presentation toggle"
 
 -----------------
 --- AUTOSTART ---
@@ -321,6 +322,7 @@ hl.bind(mainMod .. " + I", hl.dsp.exec_cmd(browser))
 hl.bind(mainMod .. " + SHIFT + X", hl.dsp.exec_cmd(lock))
 hl.bind(mainMod .. " + F", hl.dsp.exec_cmd(fullscreen_script))
 hl.bind(mainMod .. " + B", hl.dsp.exec_cmd(bluetooth_menu))
+hl.bind(mainMod .. " + CTRL + P", hl.dsp.exec_cmd(presentation_toggle))
 
 hl.bind(mainMod .. " + V", hl.dsp.exec_cmd(record_fullscreen))
 hl.bind(mainMod .. " + SHIFT + V", hl.dsp.exec_cmd(record_area))
