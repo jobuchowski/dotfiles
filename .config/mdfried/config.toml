@@ -1,5 +1,5 @@
 enable_mouse_capture = false
 
 [padding]
-type = "centered"
+type = "align-left"
 width = 80
