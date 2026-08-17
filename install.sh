@@ -36,6 +36,7 @@ PACKAGES_AUR_PATH=$SCRIPT_DIR/packages-aur.txt
 
 declare -A ignore=(
     [.git]=1
+    [.gitignore]=1
     [README.md]=1
     [requirements.txt]=1
     [install.sh]=1
@@ -44,6 +45,7 @@ declare -A ignore=(
     [bin]=1
     [polkit]=1
     [CLAUDE.md]=1
+    [CLAUDE-local.md]=1
 )
 
 if [ "$install_packages" -eq 1 ]; then

@@ -2,6 +2,8 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+Machine-local notes, if present: @CLAUDE-local.md
+
 ## What This Repo Is
 
 **SEED** (System Environment & Dotfiles) — a complete Arch Linux desktop environment configuration using the Hyprland Wayland compositor. It manages packages, dotfiles, and utility scripts for a full dev workstation setup.
