@@ -19,8 +19,9 @@
 -- }}}
 -- PLUGINS {{{
     -- Managed by vim.pack (built into Neovim 0.12). Missing plugins install on
-    -- startup. Use :Pack update to update, :Pack del <name> after removing an
-    -- entry here.
+    -- startup into ~/.local/share/nvim/site/pack/core/opt/.
+    -- Update:  :lua vim.pack.update()
+    -- Remove:  delete the entry below, then :lua vim.pack.del({'name'})
     vim.pack.add({
         'https://github.com/sjl/badwolf',
         'https://github.com/rafi/awesome-vim-colorschemes',

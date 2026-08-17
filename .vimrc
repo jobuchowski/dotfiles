@@ -52,7 +52,10 @@
         set colorcolumn=80
         set wildmenu	" autocompletion in menu with TAB
         set ruler       " cursor position in the status bar
-        set lazyredraw	" buffer screen updates instead of updating it all time
+        " 'lazyredraw' is deliberately NOT set: Neovim already batches screen
+        " updates, and deferring redraws leaves stale cells behind when async
+        " sources (LSP current-line virtual text, gitsigns blame) repaint lines
+        " off the keystroke path.
         "turn off beep and visualbell
         set visualbell
         set t_vb=

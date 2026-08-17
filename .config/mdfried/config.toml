@@ -1,0 +1,5 @@
+enable_mouse_capture = false
+
+[padding]
+type = "centered"
+width = 80
