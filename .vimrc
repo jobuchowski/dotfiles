@@ -132,6 +132,12 @@
 
         " nerd tree showrtcuts
         nnoremap <expr> <leader>n g:NERDTree.IsOpen() ? "\:NERDTreeClose<CR>" : "\:NERDTreeFind<CR>"
+
+        " show the current file as an image in a kitty overlay window.
+        " Needs allow_remote_control + listen_on in kitty.conf: `kitten icat`
+        " can't be run straight from :! because Neovim gives child processes no
+        " controlling terminal, so kitty is driven over its socket instead.
+        nnoremap <leader>i :silent !kitty @ launch --type=overlay --hold sh -c "kitten icat %:p:S; printf '\n-- press ctrl+shift+w to return to nvim --\n'"<CR>:redraw!<CR>
     " }}}
 " }}}
 " AUTO GROUPS {{{
