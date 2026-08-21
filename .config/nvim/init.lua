@@ -56,6 +56,17 @@ vim.cmd('source ~/.vimrc')
     vim.o.autocomplete = true
     vim.o.completeopt = 'menu,menuone,noselect,popup,fuzzy'
 
+    -- 'autocomplete' pulls its items from 'complete', whose default
+    -- (.,w,b,u,t) is buffer words, other buffers and tags -- no LSP. The 'o'
+    -- flag adds 'omnifunc', which the LSP client owns, so the popup that opens
+    -- as you type actually asks the server. Without it nothing an LSP knows
+    -- about (including auto-imports) can ever appear automatically:
+    -- vim.lsp.completion's own autotrigger only fires on the server's
+    -- triggerCharacters ('.' for pyright), never on plain keyword chars.
+    -- 'o' goes first so LSP items get the largest time slice and sort ahead of
+    -- the word-scraping sources, which are capped at 5 matches each.
+    vim.o.complete = 'o,.^5,w^5,b^5,u^5'
+
     -- Tab/S-Tab cycle the popup, Enter accepts. Outside the popup they behave
     -- normally.
     vim.keymap.set('i', '<Tab>', function()
@@ -106,6 +117,28 @@ vim.cmd('source ~/.vimrc')
         -- '--clang-tidy' was dropped deliberately: running clang-tidy over
         -- module units is a known clangd crash source. Re-add once modules are
         -- stable.
+    })
+
+    vim.lsp.config('pyright', {
+        -- Drop the pull-diagnostics capability for this server only.
+        -- When the client advertises textDocument/diagnostic, pyright serves
+        -- diagnostics on demand and stops analysing the workspace in the
+        -- background -- so it never parses files you haven't opened, and their
+        -- symbols can't be auto-import candidates no matter what
+        -- diagnosticMode says. Without the capability pyright pushes
+        -- diagnostics the old way (identical results, verified) and does
+        -- analyse the workspace.
+        before_init = function(params)
+            params.capabilities.textDocument.diagnostic = nil
+        end,
+        settings = {
+            python = {
+                analysis = {
+                    autoImportCompletions = true,
+                    diagnosticMode = 'workspace',
+                },
+            },
+        },
     })
 
     vim.lsp.enable({
