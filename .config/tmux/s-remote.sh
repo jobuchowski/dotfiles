@@ -1,6 +1,18 @@
 tmux_config="$HOME/.jakub/configs/tmux.conf"
 create_label="Create new session"
 
+# macOS's libc renders LANG=pl_PL.UTF-8 (exported by this repo's
+# .bash_aliases, sourced via bash's login chain) differently than Linux's
+# glibc does, in a way that corrupts tmux's Unicode/block-drawing output
+# over SSH (verified: QR codes and raw block characters print as garbled
+# underscores in tmux under LANG=pl_PL.UTF-8 on a macOS target, fine under
+# C.UTF-8; zsh, which never sources .bash_aliases, is unaffected). Force a
+# safe locale here, scoped to this tmux session, independent of whatever
+# .bash_aliases already exported.
+if [[ "$(uname -s)" == "Darwin" ]]; then
+    export LANG="C.UTF-8"
+fi
+
 require_tmux_or_fallback_shell() {
     command -v tmux >/dev/null 2>&1 || exec "${SHELL:-/bin/sh}" -l
 }
